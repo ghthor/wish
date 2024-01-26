@@ -3,48 +3,10 @@ name: Build
 on:
   push:
   pull_request:
-  workflow_call:
-    inputs:
-      go_version:
-        required: false
-        type: string
-        default: ^1
-    secrets:
-      gh_pat:
-        required: false
 
 jobs:
   build:
     uses: charmbracelet/meta/.github/workflows/build.yml@main
-
-  build-test:
-    strategy:
-      matrix:
-        go-version: ["${{ inputs.go_version }}"]
-        os: [ubuntu-latest, macos-latest, windows-latest]
-    runs-on: ${{ matrix.os }}
-    env:
-      GO111MODULE: "on"
-      GH_PAT: ${{ secrets.gh_pat }}
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-      - run: |
-          git config --global url."https://${{ secrets.gh_pat }}@github.com/charmbracelet".insteadOf "https://github.com/charmbracelet"
-        if: env.GH_PAT != null
-      - name: Install Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: ${{ matrix.go-version }}
-          cache: true
-      - name: Download Go modules
-        run: go mod download
-      - name: Build
-        run: go build ./...
-      - name: Test
-        run: |
-          env | sort -u
-          go test ./...
 
   codecov:
     runs-on: ubuntu-latest
