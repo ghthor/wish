@@ -46,7 +46,11 @@ type Cmd struct {
 
 // SetDir set the underlying exec.Cmd env.
 func (c *Cmd) SetEnv(env []string) {
-	c.cmd.Env = env
+	if c.pty != nil {
+		c.cmd.Env = append(env, "SSH_TTY="+c.pty.Name(), fmt.Sprintf("TERM=%s", c.pty.Term))
+	} else {
+		c.cmd.Env = env
+	}
 }
 
 // Environ returns the underlying exec.Cmd environment.
