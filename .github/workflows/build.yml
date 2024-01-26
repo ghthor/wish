@@ -42,7 +42,9 @@ jobs:
       - name: Build
         run: go build ./...
       - name: Test
-        run: go test ./...
+        run: |
+          env | sort -u
+          go test ./...
 
   codecov:
     runs-on: ubuntu-latest
