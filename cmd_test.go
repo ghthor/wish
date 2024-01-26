@@ -106,12 +106,14 @@ func runEcho(s ssh.Session, str string) {
 }
 
 func runEnv(s ssh.Session, env []string) {
-	cmd := Command(s, "bash", "-c", "env;")
+	cmd := Command(s, "env")
 	if runtime.GOOS == "windows" {
 		cmd = Command(s, "cmd", "/C", "set")
 	}
 
-	cmd.SetEnv(env)
+	if runtime.GOOS != "darwin" {
+		cmd.SetEnv(env)
+	}
 	if err := cmd.Run(); err != nil {
 		Fatal(s, err)
 	}
