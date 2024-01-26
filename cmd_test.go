@@ -2,7 +2,6 @@ package wish
 
 import (
 	"bytes"
-	"os"
 	"runtime"
 	"strings"
 	"testing"
@@ -107,12 +106,9 @@ func runEcho(s ssh.Session, str string) {
 }
 
 func runEnv(s ssh.Session, env []string) {
-	cmd := Command(s, "env")
+	cmd := Command(s, "bash", "-c", "env;")
 	if runtime.GOOS == "windows" {
 		cmd = Command(s, "cmd", "/C", "set")
-	}
-	if runtime.GOOS == "darwin" {
-		env = append(env, os.Environ()...)
 	}
 
 	cmd.SetEnv(env)
